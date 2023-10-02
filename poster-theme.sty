@@ -1,0 +1,113 @@
+%--------------------------------------
+%       COLORS
+%--------------------------------------
+
+% neutral palette
+\definecolor{Black}{HTML}{101820}
+
+% color palette: change these for different colors
+% use this, it is good: https://www.w3schools.com/colors/colors_picker.asp
+\definecolorpalette{MyPalette} {
+    \definecolor{colorBG}{HTML}{cce6ff} % background
+    \definecolor{colorBox}{HTML}{99ceff} % boxes
+    \definecolor{colorTB}{HTML}{e6e6e6} % title of boxes color
+    \definecolor{colorIB}{HTML}{ff6666} % inner block color
+    \definecolor{colorLine}{HTML}{1a8cff} % color of the line
+}
+
+% tikzposter style
+\definecolorstyle{MyStyle} {
+    \usecolorpalette{MyPalette}
+}{
+    % background
+    \colorlet{backgroundcolor}{colorBG}
+    \colorlet{framecolor}{colorBG}
+    \colorlet{outermargincolor}{colorBG}
+    % title colors
+    \colorlet{titlefgcolor}{Black}
+    \colorlet{titlebgcolor}{white}
+    % block colors
+    \colorlet{blocktitlebgcolor}{colorTB}
+    \colorlet{blocktitlefgcolor}{Black}
+    \colorlet{blockbodybgcolor}{colorBox}
+    \colorlet{blockbodyfgcolor}{Black}
+    % innerblock colors
+    \colorlet{innerblocktitlebgcolor}{white}
+    \colorlet{innerblocktitlefgcolor}{Black}
+    \colorlet{innerblockbodybgcolor}{colorIB}
+    \colorlet{innerblockbodyfgcolor}{Black}
+    % note colors
+    \colorlet{notefgcolor}{Black}
+    \colorlet{notebgcolor}{colorIB}
+    \colorlet{noteframecolor}{colorIB}
+}
+
+%--------------------------------------
+%       STYLES
+%--------------------------------------
+
+% background
+\definebackgroundstyle{MyBackgroundStyle}{
+    \draw[line width=0pt, color=framecolor, fill=backgroundcolor]
+    (bottomleft) rectangle (topright);
+}
+
+% title
+\definetitlestyle{MyTitleStyle}{
+    width=\textwidth, linewidth=5pt, titletotopverticalspace=0in
+}{
+    \begin{scope}[line width=\titlelinewidth,]
+    \draw[color=colorLine!30!white,round cap-round cap]
+    (\titleposleft,\titleposbottom)--(\titleposright,\titleposbottom);
+    \end{scope}
+}
+
+% block
+\defineblockstyle{MyBlockStyle}{
+    titlewidthscale=0.9, bodywidthscale=1, roundedcorners=5
+}{
+    \draw[color=framecolor, fill=blockbodybgcolor,
+    rounded corners=\blockroundedcorners] (blockbody.south west)
+    rectangle (blockbody.north east);
+    \ifBlockHasTitle
+    \draw[color=framecolor, fill=blocktitlebgcolor,
+    rounded corners=\blockroundedcorners] (blocktitle.south west)
+    rectangle (blocktitle.north east);
+    \fi
+}
+
+%--------------------------------------
+%       THEMES
+%--------------------------------------
+
+\definelayouttheme{MyTheme}{
+    \usecolorstyle[colorPalette=MyPalette]{MyStyle}
+    \usebackgroundstyle{MyBackgroundStyle}
+    \usetitlestyle{MyTitleStyle}
+    \useblockstyle{MyBlockStyle}
+    \useinnerblockstyle{Default}
+    \usenotestyle{Default}
+}
+
+%--------------------------------------
+%       TITLE FORMAT
+%--------------------------------------
+
+% place logo to right of centered title
+\makeatletter
+\renewcommand\TP@maketitle{%
+   \centering
+   \begin{minipage}[b]{0.8\linewidth}
+        \centering
+        \color{titlefgcolor}
+        {\bfseries \fontsize{90}{108}\selectfont \@title \par}
+        \vspace*{1em}
+        {\fontsize{50}{60}\selectfont \@author \par}
+        \vspace*{1em}
+        {\fontsize{40}{48}\selectfont \@institute}
+    \end{minipage}%
+    \tikz[remember picture,overlay]\node[anchor=south east,xshift=0.48\linewidth, yshift=-4.2cm,inner sep=0pt] {%
+       \@titlegraphic
+    };
+}
+\makeatother
